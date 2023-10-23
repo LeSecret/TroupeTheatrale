@@ -1,0 +1,10 @@
+-classpath 'C:\\Users\\DELL\\Downloads\\base-main\\base-main\\build\\classes\\java\\main;C:\\Users\\DELL\\Downloads\\base-main\\base-main\\build\\resources\\main'
+-d 'C:\\Users\\DELL\\Downloads\\base-main\\base-main\\build\\docs\\javadoc'
+-doctitle 'TheatricalPlayers API'
+-notimestamp 
+-quiet 
+-windowtitle 'TheatricalPlayers API'
+'C:\\Users\\DELL\\Downloads\\base-main\\base-main\\src\\main\\java\\Invoice.java'
+'C:\\Users\\DELL\\Downloads\\base-main\\base-main\\src\\main\\java\\Performance.java'
+'C:\\Users\\DELL\\Downloads\\base-main\\base-main\\src\\main\\java\\Play.java'
+'C:\\Users\\DELL\\Downloads\\base-main\\base-main\\src\\main\\java\\StatementPrinter.java'
