@@ -13,17 +13,17 @@ public class StatementPrinter {
       result.append("  " + perfplay(perf, plays).name + ": " + frmt.format(perfplay(perf, plays).getPrix(perf.audience)) + " (" + perf.audience + " seats)\n");
     }
     if(invoice.customer.soldCredits >= 150){
-      int totalAmount = totalAmount(invoice, plays) - 15;
-      int volumeCredits = invoice.customer.soldCredits - 150;
+      int totalPrices= totalPrices(invoice, plays) - 15;
+      int totalCredits = invoice.customer.soldCredits - 150;
 
       result.append("You have been deducted of 150 credits and 15$\n");
-      result.append("Amount owed is " + frmt.format(totalAmount) + "\n");
-      result.append("You earned " + volumeCredits + " credits\n");
+      result.append("Amount owed is " + frmt.format(totalPrices) + "\n");
+      result.append("You earned " + totalCredits + " credits\n");
 
       return result.toString();
     }
-    result.append("Amount owed is " + frmt.format(totalAmount(invoice, plays)) + "\n");
-    result.append("You earned " + volumeCredits(invoice, plays) + " credits\n");
+    result.append("Amount owed is " + frmt.format(totalPrices(invoice, plays)) + "\n");
+    result.append("You earned " + totalCredits(invoice, plays) + " credits\n");
 
     return result.toString();
   }
@@ -46,16 +46,16 @@ public class StatementPrinter {
     }
 
     if(invoice.customer.soldCredits >= 150){
-      int totalAmount = totalAmount(invoice, plays) - 15;
-      int volumeCredits = invoice.customer.soldCredits - 150;
+      int totalPrices= totalPrices(invoice, plays) - 15;
+      int totalCredits = invoice.customer.soldCredits - 150;
 
       result.append("\t\t\t\t<tr> \n"
       + "\t\t\t\t\t <td colspan=\"2\" style=\"text-align: right;\"><b>Total owed:<b></td> \n"
-      + "\t\t\t\t\t <td>" + frmt.format(totalAmount)+ "</td> \n"
+      + "\t\t\t\t\t <td>" + frmt.format(totalPrices)+ "</td> \n"
       + "\t\t\t\t</tr> \n");
       result.append("\t\t\t\t<tr> \n"
       + "\t\t\t\t\t <td colspan=\"2\" style=\"text-align: right;\"><b>Fidelity points earned:<b></td> \n"
-      + "\t\t\t\t\t <td>" + volumeCredits + "</td> \n"
+      + "\t\t\t\t\t <td>" + totalCredits + "</td> \n"
       + "\t\t\t\t</tr> \n");
 
       result.append("\t\t\t</table> \n"
@@ -68,12 +68,12 @@ public class StatementPrinter {
 
     result.append("\t\t\t\t<tr> \n"
     +"\t\t\t\t\t <td colspan=\"2\" style=\"text-align: right;\"><b>Total owed:<b></td> \n"
-    +"\t\t\t\t\t <td>" + frmt.format(totalAmount(invoice, plays))+ "</td> \n"
+    +"\t\t\t\t\t <td>" + frmt.format(totalPrices(invoice, plays))+ "</td> \n"
     +"\t\t\t\t</tr> \n");
     
     result.append("\t\t\t\t<tr> \n"
     + "\t\t\t\t\t <td colspan=\"2\" style=\"text-align: right;\"><b>Fidelity points earned:<b></td> \n"
-    + "\t\t\t\t\t <td>" + volumeCredits(invoice, plays) + "</td> \n"
+    + "\t\t\t\t\t <td>" + totalCredits(invoice, plays) + "</td> \n"
     + "\t\t\t\t</tr> \n");
 
     result.append("\t\t\t</table> \n"
@@ -85,7 +85,7 @@ public class StatementPrinter {
     return result.toString();
   }
 
-  private int totalAmount(Invoice invoice, Map<String, Play> plays){
+  private int totalPrices(Invoice invoice, Map<String, Play> plays){
     int result = 0;
 
     for(Performance perf: invoice.performances){
@@ -99,7 +99,7 @@ public class StatementPrinter {
     return plays.get(perf.playID);
   }
 
-  private int volumeCredits(Invoice invoice, Map<String, Play> plays){
+  private int totalCredits(Invoice invoice, Map<String, Play> plays){
     int result = 0;
 
     for(Performance perf: invoice.performances){
