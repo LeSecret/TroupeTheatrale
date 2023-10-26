@@ -8,19 +8,16 @@ public class StatementPrinter {
     int volumeCredits = 0;
     StringBuffer result = new StringBuffer("Statement for " + invoice.customer + "\n");
 
-    // Format de devise
-    NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
-
     for (Performance perf : invoice.performances) {
 
       volumeCredits+=volumeCredits(perf,plays);
       // print line for this order
-      result.append("  " + perfplay(perf, plays).name + ": " + frmt.format(totalAmount(perf, plays) / 100) + " (" + perf.audience + " seats)\n");
+      result.append("  " + perfplay(perf, plays).name + ": " + FormatDevise(totalAmount(perf, plays)) + " (" + perf.audience + " seats)\n");
       totalAmount += totalAmount(perf, plays);
     }
 
     // Ajout du montant total et des crédits de volume à la chaîne résultante
-    result.append("Amount owed is " + frmt.format(totalAmount / 100) + "\n");
+    result.append("Amount owed is " + FormatDevise(totalAmount) + "\n");
     result.append("You earned " + volumeCredits + " credits\n");
     
     // Conversion du StringBuffer en chaîne de caractères et retour
@@ -65,6 +62,10 @@ public class StatementPrinter {
     if ("comedy".equals(perfplay(perf, plays).type)) 
       result += Math.floor(perf.audience / 5);
     return result;
+  }
+
+  private String FormatDevise(int totalAmount) {
+    return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / 100);
   }
 
 }
