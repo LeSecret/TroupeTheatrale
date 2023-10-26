@@ -23,7 +23,7 @@ public class StatementPrinterTests {
                 new Performance("othello", 40)));
 
         StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.printText(invoice, plays);
+        var result = statementPrinter.toText(invoice, plays);
 
         verify(result);
     }
@@ -42,7 +42,25 @@ public class StatementPrinterTests {
                 new Performance("othello", 40)));
 
         StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.printText(invoice, plays);
+        var result = statementPrinter.toText(invoice, plays);
+
+        verify(result);
+    }
+
+    @Test
+    void exampleStatementHTML() {
+        Map<String, Play> plays = Map.of(
+                "hamlet",  new Tragedy("Hamlet"),
+                "as-like", new Comedy("As You Like It"),
+                "othello", new Tragedy("Othello"));
+
+        Invoice invoice = new Invoice(new Customer("BigCo", "1", 0), List.of(
+                new Performance("hamlet", 55),
+                new Performance("as-like", 35),
+                new Performance("othello", 40)));
+
+        StatementPrinter statementPrinter = new StatementPrinter();
+        var result = statementPrinter.toHTML(invoice, plays);
 
         verify(result);
     }
@@ -55,7 +73,8 @@ public class StatementPrinterTests {
         plays.put("as-like",  new Play("As You Like It", "pastoral"));
 
         Invoice invoice = new Invoice("BigCo", List.of(
-                new Performance("henry-v", 53),
+              verify(result);
+          new Performance("henry-v", 53),
                 new Performance("as-like", 55)));
 
         StatementPrinter statementPrinter = new StatementPrinter();
