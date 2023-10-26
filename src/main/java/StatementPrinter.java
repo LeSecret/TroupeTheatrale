@@ -13,7 +13,30 @@ public class StatementPrinter {
 
     for (Performance perf : invoice.performances) {
       Play play = plays.get(perf.playID);
-      int thisAmount = 0;
+      int thisAmount=totalAmount(perf,play);
+
+      // add volume credits
+      volumeCredits += Math.max(perf.audience - 30, 0);
+      // add extra credit for every ten comedy attendees
+      if ("comedy".equals(play.type))
+        volumeCredits += Math.floor(perf.audience / 5);
+
+      // print line for this order
+      result.append(String.format("  %s: %s (%s seats)\n", play.name, frmt.format(thisAmount / 100), perf.audience));
+      totalAmount += thisAmount;
+    }
+
+    // Ajout du montant total et des crédits de volume à la chaîne résultante
+    result.append("Amount owed is " + frmt.format(totalAmount / 100) + "\n");
+    result.append("You earned " + volumeCredits + " credits\n");
+    
+    // Conversion du StringBuffer en chaîne de caractères et retour
+    return result.toString();
+  }
+
+  private int totalAmount(Performance perf, Play play)
+  {
+    int thisAmount = 0;
 
       switch (play.type) {
         case "tragedy":
@@ -34,23 +57,7 @@ public class StatementPrinter {
         default:
           throw new Error("unknown type: ${play.type}");
       }
-
-      // add volume credits
-      volumeCredits += Math.max(perf.audience - 30, 0);
-      // add extra credit for every ten comedy attendees
-      if ("comedy".equals(play.type)) volumeCredits += Math.floor(perf.audience / 5);
-
-      // print line for this order
-      result.append(String.format("  %s: %s (%s seats)\n", play.name, frmt.format(thisAmount / 100), perf.audience));
-      totalAmount += thisAmount;
-    }
-
-    // Ajout du montant total et des crédits de volume à la chaîne résultante
-    result.append("Amount owed is " + frmt.format(totalAmount / 100) + "\n");
-    result.append("You earned " + volumeCredits + " credits\n");
-    
-    // Conversion du StringBuffer en chaîne de caractères et retour
-    return result.toString();
+    return thisAmount;
   }
 
 }
