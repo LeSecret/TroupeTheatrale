@@ -13,7 +13,6 @@ public class StatementPrinter {
 
     for (Performance perf : invoice.performances) {
       Play play = plays.get(perf.playID);
-      int thisAmount=totalAmount(perf,play);
 
       // add volume credits
       volumeCredits += Math.max(perf.audience - 30, 0);
@@ -22,8 +21,8 @@ public class StatementPrinter {
         volumeCredits += Math.floor(perf.audience / 5);
 
       // print line for this order
-      result.append(String.format("  %s: %s (%s seats)\n", play.name, frmt.format(thisAmount / 100), perf.audience));
-      totalAmount += thisAmount;
+      result.append("  " + play.name + ": " + frmt.format(totalAmount(perf, play) / 100) + " (" + perf.audience + " seats)\n");
+      totalAmount += totalAmount(perf, play);
     }
 
     // Ajout du montant total et des crédits de volume à la chaîne résultante
@@ -36,28 +35,28 @@ public class StatementPrinter {
 
   private int totalAmount(Performance perf, Play play)
   {
-    int thisAmount = 0;
+    int result = 0;
 
       switch (play.type) {
         case "tragedy":
           // Calcul du montant pour une pièce de type "tragedy"
-          thisAmount = 40000;
+          result = 40000;
           if (perf.audience > 30) {
-            thisAmount += 1000 * (perf.audience - 30);
+            result += 1000 * (perf.audience - 30);
           }
           break;
         case "comedy":
           // Calcul du montant pour une pièce de type "comedy"
-          thisAmount = 30000;
+          result = 30000;
           if (perf.audience > 20) {
-            thisAmount += 10000 + 500 * (perf.audience - 20);
+            result += 10000 + 500 * (perf.audience - 20);
           }
-          thisAmount += 300 * perf.audience;
+          result += 300 * perf.audience;
           break;
         default:
           throw new Error("unknown type: ${play.type}");
       }
-    return thisAmount;
+    return result;
   }
 
 }
