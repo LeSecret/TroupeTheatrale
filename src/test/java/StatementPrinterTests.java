@@ -17,13 +17,32 @@ public class StatementPrinterTests {
         plays.put("as-like",  new Comedy("As You Like It"));
         plays.put("othello",  new Tragedy("Othello"));
 
-        Invoice invoice = new Invoice("BigCo", List.of(
+        Invoice invoice = new Invoice(new Customer("BigCo", "1", 103), List.of(
                 new Performance("hamlet", 55),
                 new Performance("as-like", 35),
                 new Performance("othello", 40)));
 
         StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.print(invoice, plays);
+        var result = statementPrinter.printText(invoice, plays);
+
+        verify(result);
+    }
+
+    @Test
+    void exampleStatementCustomer() {
+
+        HashMap<String, Play> plays = new HashMap<>();
+        plays.put("hamlet",  new Tragedy("Hamlet"));
+        plays.put("as-like",  new Comedy("As You Like It"));
+        plays.put("othello",  new Tragedy("Othello"));
+
+        Invoice invoice = new Invoice(new Customer("BigCo", "1", 150), List.of(
+                new Performance("hamlet", 55),
+                new Performance("as-like", 35),
+                new Performance("othello", 40)));
+
+        StatementPrinter statementPrinter = new StatementPrinter();
+        var result = statementPrinter.printText(invoice, plays);
 
         verify(result);
     }
