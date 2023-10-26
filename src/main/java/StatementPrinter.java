@@ -20,8 +20,8 @@ public class StatementPrinter {
         volumeCredits += Math.floor(perf.audience / 5);
 
       // print line for this order
-      result.append("  " + perfplay(perf, plays).name + ": " + frmt.format(totalAmount(perf, perfplay(perf, plays), plays) / 100) + " (" + perf.audience + " seats)\n");
-      totalAmount += totalAmount(perf, perfplay(perf, plays), plays);
+      result.append("  " + perfplay(perf, plays).name + ": " + frmt.format(totalAmount(perf, plays) / 100) + " (" + perf.audience + " seats)\n");
+      totalAmount += totalAmount(perf, plays);
     }
 
     // Ajout du montant total et des crédits de volume à la chaîne résultante
@@ -32,7 +32,7 @@ public class StatementPrinter {
     return result.toString();
   }
 
-  private int totalAmount(Performance perf, Play play, Map<String, Play> plays)
+  private int totalAmount(Performance perf, Map<String, Play> plays)
   {
     int result = 0;
 
