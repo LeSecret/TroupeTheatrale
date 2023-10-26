@@ -12,17 +12,16 @@ public class StatementPrinter {
     NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
     for (Performance perf : invoice.performances) {
-      Play play = plays.get(perf.playID);
 
       // add volume credits
       volumeCredits += Math.max(perf.audience - 30, 0);
       // add extra credit for every ten comedy attendees
-      if ("comedy".equals(play.type))
+      if ("comedy".equals(perfplay(perf, plays).type))
         volumeCredits += Math.floor(perf.audience / 5);
 
       // print line for this order
-      result.append("  " + play.name + ": " + frmt.format(totalAmount(perf, play) / 100) + " (" + perf.audience + " seats)\n");
-      totalAmount += totalAmount(perf, play);
+      result.append("  " + perfplay(perf, plays).name + ": " + frmt.format(totalAmount(perf, perfplay(perf, plays), plays) / 100) + " (" + perf.audience + " seats)\n");
+      totalAmount += totalAmount(perf, perfplay(perf, plays), plays);
     }
 
     // Ajout du montant total et des crédits de volume à la chaîne résultante
@@ -33,11 +32,11 @@ public class StatementPrinter {
     return result.toString();
   }
 
-  private int totalAmount(Performance perf, Play play)
+  private int totalAmount(Performance perf, Play play, Map<String, Play> plays)
   {
     int result = 0;
 
-      switch (play.type) {
+      switch (perfplay(perf, plays).type) {
         case "tragedy":
           // Calcul du montant pour une pièce de type "tragedy"
           result = 40000;
@@ -54,9 +53,13 @@ public class StatementPrinter {
           result += 300 * perf.audience;
           break;
         default:
-          throw new Error("unknown type: ${play.type}");
+          throw new Error("unknown type: ${perfplay(perf, plays)}");
       }
     return result;
+  }
+
+  private Play perfplay(Performance perf, Map<String, Play> plays) {
+    return plays.get(perf.playID);
   }
 
 }
