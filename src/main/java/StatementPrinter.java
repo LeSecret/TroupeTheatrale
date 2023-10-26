@@ -1,30 +1,51 @@
 import java.text.NumberFormat;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class StatementPrinter {
 
-  public String print(Invoice invoice, HashMap<String, Play> plays) {
-    int totalAmount = 0;
-    int volumeCredits = 0;
-    StringBuffer result = new StringBuffer("Statement for " + invoice.customer + "\n");
+  public String printHTML(Invoice invoice, Map<String, Play> plays) {
+    String result = "";
+    try {
+      result = Files.readString(Paths.get(getClass().getResource("templates\\HTMLTemplate.txt").toURI()));
+    } catch (Exception e) {
+      throw new Error("Cannot read template");
+    }
 
+    StringBuffer invoiceItems = new StringBuffer();
+    for (Performance perf : invoice.performances) {
+      invoiceItems.append(
+              "<tr>\n"
+              + "<td>" + perfplay(perf, plays).name  + "</td>\n"
+              + "<td>" + FormatDevise(computeAmount(perf, plays)) + "</td>\n"
+              + "<td>" + perf.audience + "</td>\n"
+              + "</tr>\n");
+    }
+
+    result.replace("{$Invoice_Items}", invoiceItems.toString());
+    result.replace("{@Invoice_Amount}", Integer.toString(totalAmount(invoice, plays)));
+    result.replace("{$Total_Credits}", Integer.toString(volumeCredits(invoice, plays))); 
+
+    return result;
+  }
+
+  public String print(Invoice invoice, Map<String, Play> plays) {
+    StringBuffer result = new StringBuffer("Statement for " + invoice.customer + "\n");
     for (Performance perf : invoice.performances) {
 
-      volumeCredits+=volumeCredits(perf,plays);
-      // print line for this order
-      result.append("  " + perfplay(perf, plays).name + ": " + FormatDevise(totalAmount(perf, plays)) + " (" + perf.audience + " seats)\n");
-      totalAmount += totalAmount(perf, plays);
+      result.append("  " + perfplay(perf, plays).name + ": " + FormatDevise(computeAmount(perf, plays)) + " (" + perf.audience + " seats)\n");
     }
 
     // Ajout du montant total et des crédits de volume à la chaîne résultante
-    result.append("Amount owed is " + FormatDevise(totalAmount) + "\n");
-    result.append("You earned " + volumeCredits + " credits\n");
+    result.append("Amount owed is " + FormatDevise(totalAmount(invoice, plays)) + "\n");
+    result.append("You earned " + volumeCredits(invoice, plays) + " credits\n");
     
     // Conversion du StringBuffer en chaîne de caractères et retour
     return result.toString();
   }
 
-  private int totalAmount(Performance perf, Map<String, Play> plays)
+  private int computeAmount(Performance perf, Map<String, Play> plays)
   {
     int result = 0;
 
@@ -50,17 +71,36 @@ public class StatementPrinter {
     return result;
   }
 
+  private int totalAmount(Invoice invoice, Map<String, Play> plays){
+    int result = 0;
+
+    for(Performance perf: invoice.performances){
+      result += computeAmount(perf, plays);
+    }
+    return result;
+  }
+
+
   private Play perfplay(Performance perf, Map<String, Play> plays) {
     return plays.get(perf.playID);
   }
 
-  private int volumeCredits(Performance perf, Map<String, Play> plays){
+  private int computeCredits(Performance perf, Map<String, Play> plays){
     int result = 0;
     result += Math.max(perf.audience - 30, 0);
 
     // add extra credit for every ten comedy attendees
     if ("comedy".equals(perfplay(perf, plays).type)) 
       result += Math.floor(perf.audience / 5);
+    return result;
+  }
+
+  private int volumeCredits(Invoice invoice, Map<String, Play> plays){
+    int result = 0;
+
+    for(Performance perf: invoice.performances){
+      result += computeCredits(perf, plays);
+    }
     return result;
   }
 
